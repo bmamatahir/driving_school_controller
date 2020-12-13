@@ -5,7 +5,7 @@ import 'package:flutter/cupertino.dart';
 
 import 'enums.dart';
 
-class AnswerViewModel extends ChangeNotifier {
+class QuestionAnswersBloc extends ChangeNotifier {
   int currentQuestionId;
   List<QuestionAnswers> answersList = List<QuestionAnswers>();
   Function endCallback;
@@ -18,7 +18,7 @@ class AnswerViewModel extends ChangeNotifier {
 
   Timer timer;
 
-  AnswerViewModel({this.drivingLicenceType, this.autoNextSec = 15});
+  QuestionAnswersBloc({this.drivingLicenceType, this.autoNextSec = 15});
 
   _startTimer() {
     _countDown.sink.add(autoNextSec);

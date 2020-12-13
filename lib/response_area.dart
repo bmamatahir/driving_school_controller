@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:driving_school_controller/answers_viewmodel.dart';
+import 'package:driving_school_controller/question_answers_bloc.dart';
 import 'package:driving_school_controller/main.dart';
 import 'package:driving_school_controller/result.dart';
 import 'package:flutter/material.dart';
@@ -13,12 +13,12 @@ class ResponseArea extends StatefulWidget {
 }
 
 class _ResponseAreaState extends State<ResponseArea> {
-  AnswerViewModel avm;
+  QuestionAnswersBloc avm;
   String designOption = "grid";
 
   @override
   void initState() {
-    avm = Provider.of<AnswerViewModel>(context, listen: false);
+    avm = Provider.of<QuestionAnswersBloc>(context, listen: false);
     super.initState();
     avm.start();
 
@@ -50,7 +50,7 @@ class _ResponseAreaState extends State<ResponseArea> {
                       padding: const EdgeInsets.all(20.0),
                       child: Column(
                         children: <Widget>[
-                          Consumer<AnswerViewModel>(
+                          Consumer<QuestionAnswersBloc>(
                             builder: (_, answer, child) {
                               return Text(
                                 "${answer.currentQuestionId?.toString() + ""}.",
@@ -90,7 +90,7 @@ class _ResponseAreaState extends State<ResponseArea> {
                               ),
                             ],
                           ),
-                          Consumer<AnswerViewModel>(
+                          Consumer<QuestionAnswersBloc>(
                               builder: (_, answer, child) {
                             return LayoutBuilder(
                               builder: (BuildContext context,
@@ -132,7 +132,7 @@ class _ResponseAreaState extends State<ResponseArea> {
                               },
                             );
                           }),
-                          Consumer<AnswerViewModel>(
+                          Consumer<QuestionAnswersBloc>(
                               builder: (_, answer, child) {
                             return CheckboxListTile(
                               title:

@@ -1,5 +1,6 @@
-import 'package:driving_school_controller/answers_viewmodel.dart';
+import 'package:driving_school_controller/question_answers_bloc.dart';
 import 'package:driving_school_controller/response_area.dart';
+import 'package:driving_school_controller/take_note_bloc.dart';
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -31,8 +32,8 @@ void main() async {
     MultiProvider(
       providers: [
         Provider<HiveDB>.value(value: hiveDB),
-        ChangeNotifierProvider<AnswerViewModel>.value(
-            value: AnswerViewModel(
+        ChangeNotifierProvider<QuestionAnswersBloc>.value(
+            value: QuestionAnswersBloc(
                 drivingLicenceType: drivingLicenceType,
                 autoNextSec: autoNextDuration)),
       ],
@@ -68,7 +69,7 @@ class _MyHomePageState extends State<MyHomePage> {
   int defaultNQuestions = 40;
 
   TextEditingController andc = TextEditingController();
-  AnswerViewModel avm;
+  QuestionAnswersBloc avm;
 
   Map<DrivingLicenceType, String> _drivingLicenceTypes = {
     DrivingLicenceType.J: 'J',
@@ -95,7 +96,7 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
 
     _hiveDB = Provider.of<HiveDB>(context, listen: false);
-    avm = Provider.of<AnswerViewModel>(context, listen: false);
+    avm = Provider.of<QuestionAnswersBloc>(context, listen: false);
 
     _selectedDrivingLicenceType = EnumToString.fromString(
         DrivingLicenceType.values,

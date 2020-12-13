@@ -1,9 +1,12 @@
+import 'package:driving_school_controller/audio_recorder_bloc.dart';
+import 'package:driving_school_controller/data.dart';
 import 'package:driving_school_controller/main.dart';
 import 'package:driving_school_controller/qa_model.dart';
+import 'package:driving_school_controller/take_note_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import './enums.dart';
-import 'answers_viewmodel.dart';
+import 'question_answers_bloc.dart';
 
 class Result extends StatefulWidget {
   @override
@@ -11,12 +14,12 @@ class Result extends StatefulWidget {
 }
 
 class _ResultState extends State<Result> {
-  AnswerViewModel avm;
+  QuestionAnswersBloc avm;
 
   @override
   void initState() {
     super.initState();
-    avm = Provider.of<AnswerViewModel>(context, listen: false);
+    avm = Provider.of<QuestionAnswersBloc>(context, listen: false);
   }
 
   List<int> wrongAnswers = [];
@@ -87,6 +90,7 @@ class _ResultState extends State<Result> {
                     ],
                   ),
                   onPressed: () => markAnswerAsWrong(index + 1),
+                  onLongPress: () => _makeNote(index + 1),
                 ),
               );
             },
@@ -132,5 +136,120 @@ class _ResultState extends State<Result> {
   bool _confirmedAnswers(qId) {
     bool r = avm.confirmedAnswer(qId);
     return r;
+  }
+
+  _makeNote(int questionId) {
+    var audioRecorderBloc = AudioRecorderBloc();
+    var takeNoteBloc = TakeNoteBloc(
+        audioRecorderBloc: audioRecorderBloc,
+        firstAnswer: avm.getQA(questionId)?.answers ?? []);
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return MultiProvider(providers: [
+          ChangeNotifierProvider.value(value: audioRecorderBloc),
+          ChangeNotifierProvider.value(value: takeNoteBloc),
+        ], child: TakeNote());
+      },
+    );
+  }
+}
+
+class TakeNote extends StatefulWidget {
+  const TakeNote({
+    Key key,
+  }) : super(key: key);
+
+  @override
+  _TakeNoteState createState() => _TakeNoteState();
+}
+
+class _TakeNoteState extends State<TakeNote> {
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: new Text("Take Note"),
+      content: Column(
+        children: <Widget>[
+          DropdownButton<String>(
+            isExpanded: true,
+            value: CATEGORIES[0],
+            items: CATEGORIES
+                .map((c) => DropdownMenuItem(
+                      child: Text(c),
+                      value: c,
+                    ))
+                .toList(),
+            onChanged: (String cat) {},
+          ),
+          TextField(
+            maxLines: 2,
+            decoration: InputDecoration(hintText: "Enter your text here"),
+          ),
+          VoiceComment()
+        ],
+      ),
+      actions: <Widget>[
+        FlatButton(
+          child: new Text(
+            "Exit",
+            style: TextStyle(color: Colors.red),
+          ),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+        FlatButton(
+          child: new Text("Save"),
+          onPressed: () {},
+        ),
+      ],
+    );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    tn = Provider.of<TakeNoteBloc>(context, listen: false);
+    ar = Provider.of<AudioRecorderBloc>(context, listen: false);
+  }
+
+  TakeNoteBloc tn;
+  AudioRecorderBloc ar;
+
+  startRecording() {}
+
+  stopRecording() {}
+
+  cancelRecording() {}
+}
+
+class VoiceComment extends StatelessWidget {
+  const VoiceComment({
+    Key key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: <Widget>[
+        IconButton(
+          onPressed: () {},
+          icon: Icon(
+            Icons.mic,
+            color: Theme.of(context).primaryColor,
+          ),
+        ),
+        Spacer(),
+        IconButton(
+          onPressed: () {},
+          icon: Icon(
+            Icons.close,
+            color: Colors.red,
+          ),
+        ),
+      ],
+    );
   }
 }
